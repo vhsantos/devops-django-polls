@@ -136,7 +136,7 @@ replicas: 6
 This file will add 3 new Django/Gunicorn replicas to the cluster. So, after you make the changes you can apply the new configurations using the command:
 
 ```
-kubectl apply -k enviroments/prod/
+kubectl apply -k devops-django-polls/k8s/enviroments/prod/
 ```
 
 > Note: After this command, your FQDN access will be **http://polls.domain.com**, because we have changed this in the **k8s/enviroments/prod/service.yaml** too.
@@ -151,20 +151,20 @@ kubectl delete namespace vhs
 
 
 # Softwares
-- **PostgreSQL database**
+* **PostgreSQL database**
 website: https://www.postgresql.org/
 docker: https://hub.docker.com/_/postgres
 docker image: postgres:12
 
-- **Python - alpine docker base image.**
+* **Python - alpine docker base image.**
 website: https://python.org/
 docker: https://hub.docker.com/_/python
 docker image: python:3.9.1-alpine3.12
 
-- **From pip (requeriments.txt):**
-Django: django==2.2.13
-Gunicorn: gunicorn==20.0.4
-Python-PostgreSQL Database Adapter: psycopg2==2.8.6
+* **From pip (requeriments.txt):**
+  * Django: django==2.2.13
+  * Gunicorn: gunicorn==20.0.4
+  * Python-PostgreSQL Database Adapter: psycopg2==2.8.6
 
 
 See you, VHS.
