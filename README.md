@@ -150,6 +150,32 @@ kubectl delete namespace vhs
 ```
 
 
+
+
+# Docker image 
+
+We have created a Dockerfile to:
+* Download and use python/alpine image as base.
+* Add the requeriments.txt from our repository to this image.
+* Install all the necesary softwares in a virtual enviroment.
+* Copy the django project inside of the image.
+* Setup some variables.
+* Expose the port 8000/tcp 
+* Start the gunicorn daemon with 4 works.
+
+To rebuild this image, you can use these basic commands:
+
+```
+docker build -t django-polls . 
+```
+
+To upload this image to Docker Hub (change to your repository):
+```
+docker tag django-polls:latest testdtestd/django-polls:latest
+docker push testdtestd/django-polls:latest
+```
+
+
 # Softwares
 * **PostgreSQL database**
 website: https://www.postgresql.org/
