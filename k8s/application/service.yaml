@@ -1,0 +1,56 @@
+# PosgreSQL service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: vhs
+spec:
+  ports:
+    - port: 5432
+      name: postgres
+  type: ClusterIP
+  selector:
+    app: postgres
+---
+
+# Gunicorn/Django service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-polls-service
+  namespace: vhs
+  labels:
+    app: django-polls-frontend
+spec:
+  ports:
+    - name: django-polls
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: django-polls
+  type: NodePort
+---
+
+#Ingress Configuration and LB
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: django-polls-frontend
+  namespace: vhs
+  labels:
+    app: django-polls-frontend
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: django-polls.domain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: django-polls-service
+                port: 
+                  number: 8000

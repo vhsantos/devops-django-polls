@@ -1,0 +1,93 @@
+# Deny access to all
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: vhs
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+
+# Allow access to DNS traffic out
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-access
+  namespace: vhs
+spec:
+  podSelector:
+    matchLabels: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+---
+
+# Allow access from ALL to http/https to API.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-http-https-access
+  namespace: vhs
+spec:
+  podSelector:
+    matchLabels:
+      app: postgrest-api
+  policyTypes:
+  - Ingress
+  ingress:
+  - to:
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 8000
+---
+
+# Allow access from API to DB
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-db-access
+  namespace: vhs
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: postgrest-api
+  - to:
+    ports:
+      - protocol: TCP
+        port: 5432
+---
+
+# Allow acccess to internet to InitContainer to clone repository
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: internet-access
+spec:
+  podSelector:
+    matchLabels:
+      name: pg-data-clone
+  policyTypes:
+  - Egress
+  egress:
+  - {}
+---

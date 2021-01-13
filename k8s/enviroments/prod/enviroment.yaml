@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-polls
+  namespace: vhs
+spec:
+  template:
+    spec:
+      containers:
+      - name: django-polls
+        env:
+        - name: ENVIRONMENT
+          value: Production
+---
+

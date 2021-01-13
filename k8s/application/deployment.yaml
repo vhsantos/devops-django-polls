@@ -1,0 +1,119 @@
+# PostgreSQL database configuration
+# We are creating only one DB and many frontends.
+#TODO: Add a redundante DB
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+  namespace: vhs
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12
+          envFrom:
+            # Get all the variables (DBNAME, USER, PASS, PORT, etc) from secrets.
+            - secretRef:
+                name: django-polls-secret
+          volumeMounts:
+            - name: pg-data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command:
+                - bash
+                - "-c"
+                - "psql -U$POSTGRES_USER -d$POSTGRES_DB -c 'SELECT 1'"
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          livenessProbe:
+            exec:
+              command:
+                - bash
+                - "-c"
+                - "psql -U$POSTGRES_USER -d$POSTGRES_DB -c 'SELECT 1'"
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+  volumeClaimTemplates:
+    - metadata:
+        name: pg-data
+        annotations:
+          volume.beta.kubernetes.io/storage-class: standard
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
+
+    - metadata:
+        name: pg-data-init
+        annotations:
+          volume.beta.kubernetes.io/storage-class: standard
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
+---
+---
+# Django Polls configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-polls
+  namespace: vhs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django-polls
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: django-polls
+    spec:
+      # VHS
+      # Create an init container only to make the migrations everytime that the django-polls is deploy.
+      initContainers:
+        - name: django-polls-migrations
+          image: testdtestd/django-polls:v4
+
+          command: ["/bin/sh","-c"]
+          args: ["python manage.py makemigrations --noinput && python manage.py migrate --noinput"]
+
+          # VHS
+          # Here, we can add another option to collect the static files and upload to CDN for example.
+          envFrom:
+            - configMapRef:
+                name: django-polls-config
+            - secretRef:
+                name: django-polls-secret
+
+      containers:
+        - name: django-polls
+          image: testdtestd/django-polls:v4
+          envFrom:
+            - configMapRef:
+                name: django-polls-config
+            - secretRef:
+                name: django-polls-secret
+          imagePullPolicy: ""
+          ports:
+            - containerPort: 8000
+              name: gunicorn
+          resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+---

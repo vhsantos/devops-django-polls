@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-polls-config
+  namespace: vhs
+data:
+  # Disable the DEBUG in production
+  DEBUG: "False"
+  # Set the hosts allowed 
+  DJANGO_ALLOWED_HOSTS: 'django-polls.domain.com'
+  DJANGO_LOGLEVEL: "info"

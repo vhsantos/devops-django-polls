@@ -1,0 +1,13 @@
+# Specific some enviroments variables to DJANGO.
+# In this case, we changed django's settings to look and use it
+# if not, django we use the defaults values.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-polls-config
+  namespace: vhs
+data:
+  DEBUG: "True"
+  DJANGO_ALLOWED_HOSTS: '*'
+  DJANGO_LOGLEVEL: "info"
