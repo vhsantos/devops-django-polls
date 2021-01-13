@@ -44,7 +44,7 @@ That is a copy/paste from different projects. So, don't be surprised if you foun
 
 - Clone this repository:
 ```
-$ git clone https://github.com/vhsantos/devops-django-polls
+git clone https://github.com/vhsantos/devops-django-polls
 ```
 
 
@@ -123,7 +123,7 @@ in your browser to access the poll system and the django admin.
 # Changes/Customization
 You can use the kustomize's files in the directory **enviroments/[dev|prod]** to change or add new parameters to this containers. For example:
 ```
-$ cat enviroments/prod/replica_count.yaml
+cat enviroments/prod/replica_count.yaml
 
 apiVersion: apps/v1
 kind: Deployment
@@ -136,7 +136,7 @@ replicas: 6
 This file will add 3 new Django/Gunicorn replicas to the cluster. So, after you make the changes you can apply the new configurations using the command:
 
 ```
-$ kubectl apply -k enviroments/prod/
+kubectl apply -k enviroments/prod/
 ```
 
 > Note: After this command, your FQDN access will be **http://polls.domain.com**, because we have changed this in the **k8s/enviroments/prod/service.yaml** too.
@@ -146,7 +146,7 @@ $ kubectl apply -k enviroments/prod/
 To reset or delete all this configuration, use this command:
 
 ```
-$ kubectl delete namespace vhs
+kubectl delete namespace vhs
 ```
 
 
