@@ -70,7 +70,7 @@ kubectl --namespace=vhs create secret generic django-polls-secret --from-env-fil
 
 You only need to run this command to deploy all the infrastructure:
 ```
-kubectl apply -k application/
+kubectl apply -k devops-django-polls/k8s/application/
 ```
 
 This command will:
@@ -112,8 +112,8 @@ to the new FDQN that you want to use to access your cluster.
 
 
 After this, you can open this address
-[http://django-polls.domain.com/polls](http://django-polls.domain.com/polls)
-[http://django-polls.domain.com/admin](http://django-polls.domain.com/admin)
+- [http://django-polls.domain.com/polls](http://django-polls.domain.com/polls)
+- [http://django-polls.domain.com/admin](http://django-polls.domain.com/admin)
 
 in your browser to access the poll system and the django admin.
 
